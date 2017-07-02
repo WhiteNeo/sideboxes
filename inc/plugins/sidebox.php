@@ -345,21 +345,25 @@ function sidebox_start()
 	$lol6 = $mybb->settings['sb6'];
 	$lol7 = $mybb->settings['sb7'];
 	$lol8 = $mybb->settings['sb8'];
-	$lol9 = '';
-	
+
 	$lmao1= (int)$mybb->settings['sidebox6'];
 	
+	if(empty($lol1) && empty($lol2) && empty($lol3) && empty($lol4) && empty($lol5) && empty($lol6) && empty($lol7) && empty($lol8))
+		$styletd = "max-width:".$lmao1."px";
+	else
+		$styletd = "width:".$lmao1."px";
+		
 	//Display boxes on index
 	if($mybb->settings['sidebox1'] == 1)
 	{
 		if ($mybb->settings['sidebox4'] == 2)
 		{
 			$templates->cache['index'] = str_replace('{$header}', '{$header}<table width="100%" border="0"><tr><td width="auto" valign="top">',$templates->cache['index']);
-			$templates->cache['index'] = str_replace('{$footer}','</td><td style="max-width:'.$lmao1.';" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8."".$lol9.'</td></tr></table>{$footer}',$templates->cache['index']);
+			$templates->cache['index'] = str_replace('{$footer}','</td><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['index']);
 		}
 		else 
 		{
-			$templates->cache['index'] = str_replace('{$header}', '{$header}<table width="100%"  border="0"><tr><td style="max-width:'.$lmao1.';" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8."".$lol9.'</td><td width="auto" valign="top">',$templates->cache['index']);
+			$templates->cache['index'] = str_replace('{$header}', '{$header}<table width="100%"  border="0"><tr><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td><td width="auto" valign="top">',$templates->cache['index']);
 			$templates->cache['index'] = str_replace('{$footer}','</td></tr></table>{$footer}',$templates->cache['index']);
 		}
 	}
@@ -370,11 +374,11 @@ function sidebox_start()
 		if ($mybb->settings['sidebox4'] == 2)
 		{
 			$templates->cache['forumdisplay'] = str_replace('{$header}','{$header}<table width="100%"  border="0"><tr><td width="auto" valign="top">',$templates->cache['forumdisplay']);
-			$templates->cache['forumdisplay'] = str_replace('{$footer}','</td><td style="max-width:'.$lmao1.';" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8."".$lol9.'</td></tr></table>{$footer}',$templates->cache['forumdisplay']);
+			$templates->cache['forumdisplay'] = str_replace('{$footer}','</td><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['forumdisplay']);
 		}
 		else
 		{
-			$templates->cache['forumdisplay'] = str_replace('{$header}','{$header}<table width="100%"  border="0"><tr><td style="max-width:'.$lmao1.';" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8."".$lol9.'</td><td width="auto" valign="top">',$templates->cache['forumdisplay']);
+			$templates->cache['forumdisplay'] = str_replace('{$header}','{$header}<table width="100%"  border="0"><tr><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td><td width="auto" valign="top">',$templates->cache['forumdisplay']);
 			$templates->cache['forumdisplay'] = str_replace('{$footer}','</td></tr></table>{$footer}',$templates->cache['forumdisplay']);
 		}
 	}
@@ -384,11 +388,11 @@ function sidebox_start()
 		if ($mybb->settings['sidebox4'] == 2)
 		{
 			$templates->cache['showthread'] = str_replace('{$header}','	{$header}<table width="100%"  border="0"><tr><td width="auto" valign="top">',$templates->cache['showthread']);
-			$templates->cache['showthread'] = str_replace('{$footer}','</td><td style="max-width:'.$lmao1.';" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8."".$lol9.'</td></tr></table>{$footer}',$templates->cache['showthread']);
+			$templates->cache['showthread'] = str_replace('{$footer}','</td><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['showthread']);
 		}
 		else
 		{
-			$templates->cache['showthread'] = str_replace('{$header}','	{$header}<table width="100%"  border="0"><tr><td style="max-width:'.$lmao1.';" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8."".$lol9.'</td></td><td width="auto" valign="top">',$templates->cache['showthread']);
+			$templates->cache['showthread'] = str_replace('{$header}','	{$header}<table width="100%"  border="0"><tr><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></td><td width="auto" valign="top">',$templates->cache['showthread']);
 			$templates->cache['showthread'] = str_replace('{$footer}','</td></tr></table>{$footer}',$templates->cache['showthread']);
 		}
 	}
@@ -400,7 +404,7 @@ function sidebox_start()
 		$templates->cache['portal'] = str_replace('{$pms}','',$templates->cache['portal']);
 		$templates->cache['portal'] = str_replace('{$stats}','',$templates->cache['portal']);
 		$templates->cache['portal'] = str_replace('{$whosonline}','',$templates->cache['portal']);
-		$templates->cache['portal'] = str_replace('{$latestthreads}',''.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8."".$lol9.'',$templates->cache['portal']);
+		$templates->cache['portal'] = str_replace('{$latestthreads}',''.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'',$templates->cache['portal']);
 	}
 	//Generate additional boxes
 	eval("\$sbaddbox1 = \"".$db->escape_string($mybb->settings['sbadd1'])."\";");
