@@ -18,7 +18,7 @@ function sidebox_info()
 		"website"		=> "https://mybb.com",
 		"author"		=> "Dark Neo",
 		"authorsite"	=> "https://soportemybb.es",
-		"version"		=> "1.2",
+		"version"		=> "1.3",
 		"compatibility" => "18*",
 		"codename" 		=> "dnt_sidebox",
 	);
@@ -301,7 +301,33 @@ function sidebox_activate()
 	$db->insert_query("settings", $sidebox_setting_15);
 	$db->insert_query("settings", $sidebox_setting_16);
 	rebuild_settings();
+	//Agregando la hoja de estilos.
+	$style_css = '.modal_avatar{.portal_sb{margin:auto}
+.index_sb{padding: 0 20px}
+.showthread_sb{40px 0px 0px 20px}.
+.forumdisplay_sb{padding:46px 0px 0px 20px}
+@media screen and (max-width: 450px){	
+	.portal_sb,.index_sb,.showthread_sb,.forumdisplay_sb{display:none;}
+}';
+
+	$stylesheet = array(
+		"name"			=> "sidebox.css",
+		"tid"			=> 1,
+		"attachedto"	=> 0,		
+		"stylesheet"	=> $db->escape_string($style_css),
+		"cachefile"		=> "sidebox.css",
+		"lastmodified"	=> TIME_NOW
+	);
+
+	$sid = $db->insert_query("themestylesheets", $stylesheet);
+	
+	//Archivo requerido para cambios en estilos y plantillas.
+	require_once MYBB_ADMIN_DIR.'/inc/functions_themes.php';
+	cache_stylesheet($stylesheet['tid'], $stylesheet['cachefile'], $style_css);
+	update_theme_stylesheet_list(1, false, true);
+	
 }
+
 function sidebox_deactivate()
 {
 	global $db;
@@ -323,11 +349,20 @@ function sidebox_deactivate()
 	$db->query("DELETE FROM ".TABLE_PREFIX."settings WHERE name='sbadd1'");
 	$db->query("DELETE FROM ".TABLE_PREFIX."settings WHERE name='sbadd2'");
 	rebuild_settings();
+
+    //Eliminamos la hoja de estilo creada...
+   	$db->delete_query('themestylesheets', "name='sidebox.css'");
+	$query = $db->simple_select('themes', 'tid');
+	while($theme = $db->fetch_array($query))
+	{
+		require_once MYBB_ADMIN_DIR.'inc/functions_themes.php';
+		update_theme_stylesheet_list($theme['tid']);
+	}	
 }
+
 function sidebox_start()
 {
-	global $mybb,$db,$lang,$templates,$cache;
-	global $sbwelcome,$sbpms,$sbsearch,$sbstats,$sbwhosonline,$sblatestthreads,$gobutton,$lastvisit,$sbaddbox1,$sbaddbox2;
+	global $mybb,$db,$lang,$templates,$cache,$sbwelcome,$sbpms,$sbsearch,$sbstats,$sbwhosonline,$sblatestthreads,$gobutton,$lastvisit,$sbaddbox1,$sbaddbox2;
 
 	require_once MYBB_ROOT."inc/class_parser.php";
 	$parser = new postParser;
@@ -335,8 +370,7 @@ function sidebox_start()
 	// Load global language phrases
 	$lang->load("portal", false, true);
 	
-	//Variables to use
-	
+	//Variables to use	
 	$lol1 = $mybb->settings['sb1'];
 	$lol2 = $mybb->settings['sb2'];
 	$lol3 = $mybb->settings['sb3'];
@@ -348,10 +382,28 @@ function sidebox_start()
 
 	$lmao1= (int)$mybb->settings['sidebox6'];
 	
+	switch(THIS_SCRIPT)
+	{
+		case "portal.php" :	
+			$sbextrastyle = "port_sb";
+		break;
+		case "index.php" :	
+			$sbextrastyle = "index_sb";
+		break;
+		case "showthread.php" :	
+			$sbextrastyle = "showthread_sb";
+		break;
+		case "forumdisplay.php" :	
+			$sbextrastyle = "forumdisplay_sb";
+		break;		
+		default : $sbextrastyle = "global_sb";	
+	}
+
+	
 	if(empty($lol1) && empty($lol2) && empty($lol3) && empty($lol4) && empty($lol5) && empty($lol6) && empty($lol7) && empty($lol8))
-		$styletd = "max-width:".$lmao1."px";
+		$styletd = "max-width:".$lmao1."px;";
 	else
-		$styletd = "width:".$lmao1."px";
+		$styletd = "width:".$lmao1."px;";
 		
 	//Display boxes on index
 	if($mybb->settings['sidebox1'] == 1)
@@ -359,11 +411,11 @@ function sidebox_start()
 		if ($mybb->settings['sidebox4'] == 2)
 		{
 			$templates->cache['index'] = str_replace('{$header}', '{$header}<table width="100%" border="0"><tr><td width="auto" valign="top">',$templates->cache['index']);
-			$templates->cache['index'] = str_replace('{$footer}','</td><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['index']);
+			$templates->cache['index'] = str_replace('{$footer}','</td><td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['index']);
 		}
 		else 
 		{
-			$templates->cache['index'] = str_replace('{$header}', '{$header}<table width="100%"  border="0"><tr><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td><td width="auto" valign="top">',$templates->cache['index']);
+			$templates->cache['index'] = str_replace('{$header}', '{$header}<table width="100%"  border="0"><tr><td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td><td width="auto" valign="top">',$templates->cache['index']);
 			$templates->cache['index'] = str_replace('{$footer}','</td></tr></table>{$footer}',$templates->cache['index']);
 		}
 	}
@@ -374,11 +426,11 @@ function sidebox_start()
 		if ($mybb->settings['sidebox4'] == 2)
 		{
 			$templates->cache['forumdisplay'] = str_replace('{$header}','{$header}<table width="100%"  border="0"><tr><td width="auto" valign="top">',$templates->cache['forumdisplay']);
-			$templates->cache['forumdisplay'] = str_replace('{$footer}','</td><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['forumdisplay']);
+			$templates->cache['forumdisplay'] = str_replace('{$footer}','</td><td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['forumdisplay']);
 		}
 		else
 		{
-			$templates->cache['forumdisplay'] = str_replace('{$header}','{$header}<table width="100%"  border="0"><tr><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td><td width="auto" valign="top">',$templates->cache['forumdisplay']);
+			$templates->cache['forumdisplay'] = str_replace('{$header}','{$header}<table width="100%"  border="0"><tr><td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td><td width="auto" valign="top">',$templates->cache['forumdisplay']);
 			$templates->cache['forumdisplay'] = str_replace('{$footer}','</td></tr></table>{$footer}',$templates->cache['forumdisplay']);
 		}
 	}
@@ -388,14 +440,15 @@ function sidebox_start()
 		if ($mybb->settings['sidebox4'] == 2)
 		{
 			$templates->cache['showthread'] = str_replace('{$header}','	{$header}<table width="100%"  border="0"><tr><td width="auto" valign="top">',$templates->cache['showthread']);
-			$templates->cache['showthread'] = str_replace('{$footer}','</td><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['showthread']);
+			$templates->cache['showthread'] = str_replace('{$footer}','</td><td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></tr></table>{$footer}',$templates->cache['showthread']);
 		}
 		else
 		{
-			$templates->cache['showthread'] = str_replace('{$header}','	{$header}<table width="100%"  border="0"><tr><td style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></td><td width="auto" valign="top">',$templates->cache['showthread']);
+			$templates->cache['showthread'] = str_replace('{$header}','	{$header}<table width="100%"  border="0"><tr><td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">'.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'</td></td><td width="auto" valign="top">',$templates->cache['showthread']);
 			$templates->cache['showthread'] = str_replace('{$footer}','</td></tr></table>{$footer}',$templates->cache['showthread']);
 		}
 	}
+	
 	//Display additional boxes on portal
 	if($mybb->settings['sidebox5'] == 1)
 	{
@@ -405,10 +458,13 @@ function sidebox_start()
 		$templates->cache['portal'] = str_replace('{$stats}','',$templates->cache['portal']);
 		$templates->cache['portal'] = str_replace('{$whosonline}','',$templates->cache['portal']);
 		$templates->cache['portal'] = str_replace('{$latestthreads}',''.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'',$templates->cache['portal']);
+		$templates->cache['portal'] = str_replace('<td valign="top" width="200">','<td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">',$templates->cache['portal']);			
 	}
+	//$sbwelcome = $sbpms = $sbsearch = $sbstats = $sbwhosonline = $sblatestthreads = "Cajas"; 
 	//Generate additional boxes
 	eval("\$sbaddbox1 = \"".$db->escape_string($mybb->settings['sbadd1'])."\";");
 	eval("\$sbaddbox2 = \"".$db->escape_string($mybb->settings['sbadd2'])."\";");	
+	
 	
 	//Below are codes from portal.php MyBB version: 1.8.12
 	// get forums user cannot view
