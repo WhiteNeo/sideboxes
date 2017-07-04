@@ -18,7 +18,7 @@ function sidebox_info()
 		"website"		=> "https://mybb.com",
 		"author"		=> "Dark Neo",
 		"authorsite"	=> "https://soportemybb.es",
-		"version"		=> "1.3",
+		"version"		=> "1.2",
 		"compatibility" => "18*",
 		"codename" 		=> "dnt_sidebox",
 	);
@@ -366,7 +366,8 @@ function sidebox_start()
 
 	require_once MYBB_ROOT."inc/class_parser.php";
 	$parser = new postParser;
-
+	$forum_cache = $cache->read('forums');
+	
 	// Load global language phrases
 	$lang->load("portal", false, true);
 	
@@ -458,13 +459,12 @@ function sidebox_start()
 		$templates->cache['portal'] = str_replace('{$stats}','',$templates->cache['portal']);
 		$templates->cache['portal'] = str_replace('{$whosonline}','',$templates->cache['portal']);
 		$templates->cache['portal'] = str_replace('{$latestthreads}',''.$lol1."".$lol2."".$lol3."".$lol4."".$lol5."".$lol6."".$lol7."".$lol8.'',$templates->cache['portal']);
-		$templates->cache['portal'] = str_replace('<td valign="top" width="200">','<td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">',$templates->cache['portal']);			
+		$templates->cache['portal'] = str_replace('<td valign="top" width="200">','<td class="'.$sbextrastyle.'" style="'.$styletd.'" valign="top">',$templates->cache['portal']);		
 	}
 	//$sbwelcome = $sbpms = $sbsearch = $sbstats = $sbwhosonline = $sblatestthreads = "Cajas"; 
 	//Generate additional boxes
 	eval("\$sbaddbox1 = \"".$db->escape_string($mybb->settings['sbadd1'])."\";");
 	eval("\$sbaddbox2 = \"".$db->escape_string($mybb->settings['sbadd2'])."\";");	
-	
 	
 	//Below are codes from portal.php MyBB version: 1.8.12
 	// get forums user cannot view
